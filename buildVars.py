@@ -11,22 +11,21 @@ addon_info = {
 	# for previously unpublished addons, please follow the community guidelines at:
 	# https://bitbucket.org/nvdaaddonteam/todo/raw/master/guideLines.txt
 	# add-on Name, internal for nvda
-	"addon_name" : "addonTemplate",
+	"addon_name" : "nvdaDevTools",
 	# Add-on summary, usually the user visible name of the addon.
 	# Translators: Summary for this add-on to be shown on installation and add-on information.
-	"addon_summary" : _("Add-on user visible name"),
+	"addon_summary" : _("NVDA Development Tools"),
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-	"addon_description" : _("""Description for the add-on.
-It can span multiple lines."""),
+	"addon_description" : _("An addon which contains several development tools for de NVDA screen reader"),
 	# version
-	"addon_version" : "x.y",
+	"addon_version" : "0.1",
 	# Author(s)
-	"addon_author" : u"name <name@domain.com>",
+	"addon_author" : u"Babbage Automation (Leonard de Ruijter) <leonard@babbage.com>",
 	# URL for the add-on documentation support
 	"addon_url" : None,
 	# Documentation file name
-	"addon_docFileName" : "readme.html",
+	"addon_docFileName" : None,
 }
 
 
@@ -34,7 +33,7 @@ import os.path
 
 # Define the python files that are the sources of your add-on.
 # You can use glob expressions here, they will be expanded.
-pythonSources = []
+pythonSources = ["addon/globalPlugins/%s/*.py",addon_info.get("addon_name")]
 
 # Files that contain strings for translation. Usually your python sources
 i18nSources = pythonSources + ["buildVars.py"]
