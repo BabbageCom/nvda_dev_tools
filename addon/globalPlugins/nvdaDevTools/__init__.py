@@ -3,6 +3,7 @@
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
 
+import os
 import gui
 import wx
 import api
@@ -109,27 +110,32 @@ class ObjectTreeDialog(wx.Dialog):
 	def generateObjectsList(self, root):
 		if config.conf.profileTriggersEnabled:
 			config.conf.profileTriggersEnabled=False
-			
 		self._objects=[]
 		parents = []
 		# We can simply start from the root, find every recursive escendant and throw it in a list
-		for obj in root.recursiveDescendants:
-			label=", ".join([obj.name or _("unlabeled"), controlTypes.roleLabels[obj.role], obj.windowClassName])		
-			for parent in reversed(parents):
-				if obj in parent.obj.children:
-					break
-				else:
-					# We're not a child of this parent, so this parent has no more children and can be removed from the stack.
-					parents.pop()
-			else:
-				# No parent found, so we're at the root.
-				# Note that parents will be empty at this point, as all parents are no longer relevant and have thus been removed from the stack.
-				parent = None
-			object=self.Object(obj,label,parent)
-			self._objects.append(object)
-			# This could be the parent of a subsequent element, so add it to the parents stack.
-			parents.append(object)
 
+		def createObjectTuple(obj):
+			if not (obj.location and obj.location == (0, 0, 0, 0) and controlTypes.STATE_INVISIBLE in obj.states and not self.includeInvisibleObjects):
+				label=", ".join([obj.name or _("unlabeled"), controlTypes.roleLabels[obj.role], obj.windowClassName])		
+				for parent in reversed(parents):
+					if obj in parent.obj.children:
+						break
+					else:
+						# We're not a child of this parent, so this parent has no more children and can be removed from the stack.
+						parents.pop()
+				else:
+					# No parent found, so we're at the root.
+					# Note that parents will be empty at this point, as all parents are no longer relevant and have thus been removed from the stack.
+					parent = None
+				object=self.Object(obj,label,parent)
+				self._objects.append(object)
+				# This could be the parent of a subsequent element, so add it to the parents stack.
+				parents.append(object)
+				for childObj in obj.children:
+					createObjectTuple(childObj)
+		for obj in root.children:
+			createObjectTuple(obj)
+	
 	def onTreeSetFocus(self, evt):
 		evt.Skip()
 
