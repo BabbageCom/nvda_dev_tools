@@ -53,7 +53,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.toolsMenu.RemoveItem(self.objectTreeMenuItem)
 		self.objectTreeMenuItem.Destroy()
 		self.objectTreeMenuItem=None
-		# We want to re-enable config profile triggers when they were disabled by us
 
 class ObjectTreeDialog(wx.Dialog):
 	includeInvisibleObjects = True
@@ -108,8 +107,10 @@ class ObjectTreeDialog(wx.Dialog):
 		self.tree.ExpandAll()
 
 	def generateObjectsList(self, root):
+		profileTriggersDisabledByUs=False
 		if config.conf.profileTriggersEnabled:
 			config.conf.profileTriggersEnabled=False
+			profileTriggersDisabledByUs=True
 		self._objects=[]
 		parents = []
 		# We can simply start from the root, find every recursive escendant and throw it in a list
@@ -135,6 +136,11 @@ class ObjectTreeDialog(wx.Dialog):
 					createObjectTuple(childObj)
 		for obj in root.children:
 			createObjectTuple(obj)
+		# Re-enable the triggers when they were disabled by us
+		if profileTriggersDisabledByUs and not config.conf.profileTriggersEnabled:
+			config.conf.profileTriggersEnabled=True
+			profileTriggersDisabledByUs=False
+
 	
 	def onTreeSetFocus(self, evt):
 		evt.Skip()
