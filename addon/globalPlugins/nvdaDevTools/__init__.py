@@ -55,7 +55,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.objectTreeMenuItem=None
 
 class ObjectTreeDialog(wx.Dialog):
-	includeInvisibleObjects = True
+	includeInvisibleObjects = False
 	_objects = []
 	Object = collections.namedtuple("Object", ("obj", "label", "parent"))
 
